@@ -4,6 +4,7 @@
 import time
 from latex import *
 from gnupg import *
+from fortune import *
 
 doc  = documentclass('memoir', '11pt', 'oneside', 'a4paper')
 doc += fontencoding('T1')
@@ -46,6 +47,14 @@ if keys is not None and len(keys) > 0:
         if days <= 5:
             text = '\\textcolor{red!75!black}{%s}' % text
         doc += ln(text)
+    doc += '\n\n'
+
+quote = fortune() # params: max line, max columns, max tries, quote listing file
+if quote is not None:
+    doc += sectionx(whiteonblack('Fortune of the day'))
+    doc += begin('verbatim')
+    doc += quote + '\n'
+    doc += end('verbatim')
     doc += '\n\n'
 
 doc += end('document')
