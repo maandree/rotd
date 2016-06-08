@@ -26,6 +26,7 @@ def gnupg_expiry(warn_period = 30):
             expiry = float(time.strftime('%s', time.strptime(expiry, '%Y-%m-%d'))) - now
             if expiry >= 0 and expiry < warn_period:
                 rc.append((key, int(expiry) // 60 // 60 // 24))
+        rc.sort(key = lambda x : x[1])
         return rc
     except:
         return None
