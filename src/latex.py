@@ -13,12 +13,16 @@ def usepackage(pkg, *vargs, **kwargs):
         opt = '[' + opt + ']'
     return '\\usepackage%s{%s}\n' % (opt, pkg)
 
+def fontencoding(enc = 'T1'):
+    return '\\fontencoding{%s}\n' % enc
+
 
 def pagestyle(style, *vargs, **kwargs):
     opt = ','.join([str(x) for x in vargs] + ['%s=%s' % (k, str(kwargs[k])) for k in kwargs])
     if not opt == '':
         opt = '[' + opt + ']'
     return '\\pagestyle%s{%s}\n' % (opt, style)
+
 
 
 def begin(cmd, *vargs):
@@ -80,3 +84,21 @@ def md(text, end = '\n'):
     return '\\textmd{%s}%s' % (str(text), str(end))
 def lf(text, end = '\n'):
     return '\\textlf{%s}%s' % (str(text), str(end))
+
+def chapter(text, end = '\n'):
+    return '\\chapter{%s}%s' % (str(text), str(end))
+def section(text, end = '\n'):
+    return '\\section{%s}%s' % (str(text), str(end))
+def subsection(text, end = '\n'):
+    return '\\subsection{%s}%s' % (str(text), str(end))
+def subsubsection(text, end = '\n'):
+    return '\\subsubsection{%s}%s' % (str(text), str(end))
+
+def chapterx(text, end = '\n'):
+    return '\\chapter*{%s}%s' % (str(text), str(end))
+def sectionx(text, end = '\n'):
+    return '\\section*{%s}%s' % (str(text), str(end))
+def subsectionx(text, end = '\n'):
+    return '\\subsection*{%s}%s' % (str(text), str(end))
+def subsubsectionx(text, end = '\n'):
+    return '\\subsubsection*{%s}%s' % (str(text), str(end))

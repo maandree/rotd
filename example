@@ -3,11 +3,21 @@
 
 import time
 from latex import *
+from gnupg import *
 
 doc  = documentclass('memoir', '11pt', 'oneside', 'a4paper')
+doc += fontencoding('T1')
+doc += usepackage('inputenc', 'utf8')
+doc += usepackage('xcolor')
 doc += usepackage('geometry', margin = '1in')
 doc += usepackage('microtype')
+
 doc += pagestyle('empty')
+
+doc += '\\newcommand{\\whiteonblack}[1]{\\colorbox{black}{\\textcolor{white}{#1}}}\n'
+def whiteonblack(text, end = ''):
+    return '\\whiteonblack{%s}%s' % (text, end)
+
 doc += begin('document')
 
 now = time.localtime()
@@ -18,12 +28,25 @@ holiday_tomorrow = now.tm_wday == 6
 doc += begin('center')
 doc += Huge('Report of the day, %s' % time.strftime('%Y-(%m)%b-%d', now))
 doc += end('center')
+doc += '\n\n'
+doc += '\\hspace*{-2em}'
 doc += begin('tabular', 'll')
 doc += ln(bf('Week:', ' & ' + time.strftime('%W', now)))
 doc += ln(bf('Weekday:', ' & ' + time.strftime('%A', now)))
 doc += ln(bf('Holiday today?', ' & ' + ('yes' if holiday_today else 'don\'t think so')))
 doc += ln(bf('Holiday tomorrow?', ' & ' + ('yes' if holiday_tomorrow else 'don\'t think so')))
 doc += end('tabular')
+doc += '\n\n'
+
+keys = gnupg_expiry() # for 60 days: gnupg_expiry(60)
+if keys is not None and len(keys) > 0:
+    doc += sectionx(whiteonblack('GnuPG key-expiry'))
+    for key, days in keys:
+        text = '%s will expire in %i days' % (tt(key, ''), days)
+        if days <= 5:
+            text = '\\textcolor{red!75!black}{%s}' % text
+        doc += ln(text)
+    doc += '\n\n'
 
 doc += end('document')
 write(doc)
