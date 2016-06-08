@@ -1,0 +1,13 @@
+# -*- python -*-
+# See LICENSE file for copyright and license details.
+
+document  = '\\documentclass[11pt,oneside]{article}\n'
+document += '\\usepackage[margin=1in]{geometry}\n'
+document += '\\usepackage{microtype}\n'
+
+document += '\\begin{document}\n'
+
+document += 'Lorem ipsum\n'
+
+document += '\\end{document}\n'
+write(document)

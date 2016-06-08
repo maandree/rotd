@@ -47,7 +47,7 @@ def write(text):
     
     @param  text:str  The text to write.
     '''
-    texfile.write(data.encode('utf-8'))
+    texfile.write(text.encode('utf-8'))
     texfile.flush()
 
 # Get current globals
@@ -82,15 +82,6 @@ def setproctitle(title):
     except:
         pass
 setproctitle(sys.argv[0])
-
-# Create and cd into temporary directory
-cwd = os.getcwd()
-tempdir = '/tmp/rotd.%f~%i.d' % (time.time(), os.getuid())
-os.mkdir(tempdir)
-os.chdir(tempdir)
-
-# Open LaTeX file, used in function `write`
-texfile = open('rotd.tex', 'ab'):
 
 # Find configuration script
 config_file = None
@@ -129,27 +120,31 @@ for file in ('$ROTD_SCRIPT', '$XDG_CONFIG_HOME/%/%rc', '$HOME/.config/%/%rc', '$
             config_file = file
             # and stop trying files with lower precedence.
             break
-
-# Load and run configurion script
-if config_file is not None:
-    code = None
-    # Read configuration script file
-    with open(config_file, 'rb') as script:
-        code = script.read()
-    # Decode configurion script file and add a line break
-    # at the end to ensure that the last line is empty.
-    # If it is not, we will get errors.
-    code = code.decode('utf-8', 'error') + '\n'
-    # Compile the configuration script,
-    code = compile(code, config_file, 'exec')
-    # and run it, with it have the same
-    # globals as this module, so that it can
-    # not only use want we have defined, but
-    # also redefine it for us.
-    exec(code, g)
-else:
+if config_file is None:
     print('No configuration file found', file = sys.stderr)
     sys.exit(1)
+config_file = os.path.realpath(config_file)
+
+# Create and cd into temporary directory
+cwd = os.getcwd()
+tempdir = '/tmp/rotd.%f~%i.d' % (time.time(), os.getuid())
+os.mkdir(tempdir)
+os.chdir(tempdir)
+
+# Open LaTeX file, used in function `write`
+texfile = open('rotd.tex', 'ab')
+
+# Read configuration script file
+with open(config_file, 'rb') as script:
+    code = script.read()
+# Decode configurion script file and add a line break
+# at the end to ensure that the last line is empty.
+# If it is not, we will get errors.
+code = code.decode('utf-8', 'error') + '\n'
+# Compile the configuration script,
+code = compile(code, config_file, 'exec')
+# Run script
+exec(code, g)
 
 # Compile PDF file
 texfile.close()
@@ -157,7 +152,6 @@ spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex')
 spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex')
 
 # Move or print file?
-os.chdir(cwd)
 print_output = False
 output_file = sys.argv[1]
 if output_file[:1] == '/':
@@ -171,6 +165,7 @@ elif output_file == '-':
     output_file = '/dev/stdout'
 
 # Move or print file!
+os.chdir(cwd)
 pdffile = '%s/rotd.pdf' % tempdir
 if print_output:
     with open(pdffile, 'rb') as file:
