@@ -10,3 +10,4 @@ __pycache__/
 bin/
 aux/
 obj/
+*.pdf
