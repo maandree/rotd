@@ -1,0 +1,14 @@
+NAME
+	rotd - Report of the day
+
+DESCRIPTION
+	rotd generates a daily PDF with information of
+	your choosing. It may contain, for example,
+	birthday reminders, upcoming events, today's
+	schedule, and whether reports.
+
+	The idea, is to have cron run its every morning,
+	before you wake up, and either print out the
+	PDF, e-mail it do you, or store it on your
+	home or desktop directory, or anything else you
+	can imagine.
