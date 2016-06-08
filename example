@@ -1,13 +1,29 @@
 # -*- python -*-
 # See LICENSE file for copyright and license details.
 
-document  = '\\documentclass[11pt,oneside]{article}\n'
-document += '\\usepackage[margin=1in]{geometry}\n'
-document += '\\usepackage{microtype}\n'
+import time
+from latex import *
 
-document += '\\begin{document}\n'
+doc  = documentclass('memoir', '11pt', 'oneside', 'a4paper')
+doc += usepackage('geometry', margin = '1in')
+doc += usepackage('microtype')
+doc += pagestyle('empty')
+doc += begin('document')
 
-document += 'Lorem ipsum\n'
+now = time.localtime()
 
-document += '\\end{document}\n'
-write(document)
+holiday_today    = now.tm_wday == 0
+holiday_tomorrow = now.tm_wday == 6
+
+doc += begin('center')
+doc += Huge('Report of the day, %s' % time.strftime('%Y-(%m)%b-%d', now))
+doc += end('center')
+doc += begin('tabular', 'll')
+doc += ln(bf('Week:', ' & ' + time.strftime('%W', now)))
+doc += ln(bf('Weekday:', ' & ' + time.strftime('%A', now)))
+doc += ln(bf('Holiday today?', ' & ' + ('yes' if holiday_today else 'don\'t think so')))
+doc += ln(bf('Holiday tomorrow?', ' & ' + ('yes' if holiday_tomorrow else 'don\'t think so')))
+doc += end('tabular')
+
+doc += end('document')
+write(doc)
