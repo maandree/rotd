@@ -96,11 +96,11 @@ texfile = open('rotd.tex', 'ab'):
 config_file = None
 # Possible auto-selected configuration scripts,
 # earlier ones have precedence, we can only select one.
-for file in ('$XDG_CONFIG_HOME/%/%rc', '$HOME/.config/%/%rc', '$HOME/.%rc', '$~/.config/%/%rc', '$~/.%rc', '/etc/%rc'):
+for file in ('$ROTD_SCRIPT', '$XDG_CONFIG_HOME/%/%rc', '$HOME/.config/%/%rc', '$HOME/.%rc', '$~/.config/%/%rc', '$~/.%rc', '/etc/%rc'):
     # Expand short-hands
     file = file.replace('/', os.sep).replace('%', 'rotd')
     # Expand environment variables
-    for arg in ('XDG_CONFIG_HOME', 'HOME'):
+    for arg in ('ROTD_SCRIPT', 'XDG_CONFIG_HOME', 'HOME'):
         # Environment variables are prefixed with $
         if '$' + arg in file:
             if arg in os.environ:
