@@ -20,12 +20,12 @@ def gnupg_expiry(warn_period = 30):
         output = [x.split('/')[1].split(' ') for x in output if x.startswith('sec') and 'expires' in x]
         output = [(x[0], x[4][:-1]) for x in output]
         rc = []
-        now = time.time()
-        warn_period = warn_period * 60 * 60 * 24
+        now = time.time() // (60 * 60 * 24)
         for key, expiry in output:
-            expiry = float(time.strftime('%s', time.strptime(expiry, '%Y-%m-%d'))) - now
+            expiry = int(time.strftime('%s', time.strptime(expiry + ' UTC', '%Y-%m-%d %Z')))
+            expiry = expiry // (60 * 60 * 24) - now
             if expiry >= 0 and expiry < warn_period:
-                rc.append((key, int(expiry) // 60 // 60 // 24))
+                rc.append((key, expiry))
         rc.sort(key = lambda x : x[1])
         return rc
     except:
