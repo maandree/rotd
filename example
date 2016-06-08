@@ -6,6 +6,7 @@ from latex import *
 from gnupg import *
 from fortune import *
 from events import *
+from wotd import *
 
 doc  = documentclass('memoir', '11pt', 'oneside', 'a4paper')
 doc += fontencoding('T1')
@@ -80,6 +81,12 @@ if quote is not None:
     doc += begin('verbatim')
     doc += quote + '\n'
     doc += end('verbatim')
+    doc += '\n\n'
+
+word = wotd()
+if word is not None:
+    doc += sectionx(whiteonblack('Word of the day'))
+    doc += word
     doc += '\n\n'
 
 doc += end('document')

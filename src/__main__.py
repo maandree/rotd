@@ -3,7 +3,9 @@
 
 import os, sys, time
 
-global spawn, write
+global spawn, write, LIBEXEC
+
+LIBEXEC = os.getcwd() + ('/..' if os.getcwd().endswith('/src') else '') + '/libexec'
 
 # Check argv
 if len(sys.argv) != 2:
@@ -11,32 +13,55 @@ if len(sys.argv) != 2:
     print('Usage: %s output-file' % argv0, file = sys.stderr)
     sys.exit(1)
 
-def spawn(*cmd, successful_exits = [0]):
+def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False, cleanup_on_error = False):
     '''
     Spawn a process without a stdin
     
-    @param  cmd:*str                       The command to run
-    @param  successful_exits:set<int>|...  For which exit values shall rotd _not_ fail,
-                                           `...` for never fail even if the command
-                                           exited by a signal
+    @param   cmd:*str                       The command to run
+    @param   abort_timer:int                The number of seconds before aborting, 0 for never
+    @param   successful_exits:set<int>|...  For which exit values shall rotd _not_ fail,
+                                            `...` for never fail even if the command
+                                            exited by a signal
+    @param   get_stdout:bool                Should the process's stdout be returned
+    @param   cleanup_on_error:bool          Cleanup the temporary files before exiting on error
+    @return  :str?                          The process's output to stdout, if `get_stdout`
     '''
+    if get_stdout:
+        r, w = os.pipe()
     pid = os.fork()
     if pid == 0:
         try:
             os.close(0)
         except:
             pass
+        if get_stdout and w != 1:
+            os.dup2(w, 1)
+            os.close(r)
+        if int(abort_timer) > 0:
+            import signal
+            signal.alarm(int(abort_timer))
         os.execvp(cmd[0], cmd)
     else:
+        output = None
+        if get_stdout:
+            os.close(w)
+            output = b''
+            while True:
+                partial = os.read(r, 4096)
+                if len(partial) == 0:
+                    break
+                output += partial
+            os.close(r)
         _, status = os.waitpid(pid, 0)
         if successful_exits is ...:
-            return
+            return output
         if os.WIFEXITED(status):
             if os.WEXITSTATUS(status) in successful_exits:
-                return
-        os.chdir(cwd)
-        spawn('rm', '-rf', '--', tempdir, successful_exits = ...)
-        sys.exit(1)
+                return output
+        if cleanup_on_error:
+            os.chdir(cwd)
+            spawn('rm', '-rf', '--', tempdir, successful_exits = ...)
+        raise Exception('External command failed')
 
 def write(text):
     '''
@@ -148,8 +173,8 @@ exec(code, g)
 
 # Compile PDF file
 texfile.close()
-spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex')
-spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex')
+spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex', cleanup_on_error = True)
+spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex', cleanup_on_error = True)
 
 # Move or print file?
 print_output = False
@@ -174,7 +199,7 @@ if print_output:
         file.write(data)
         file.flush()
 else:
-    spawn('mv', '--', pdffile, output_file)
+    spawn('mv', '--', pdffile, output_file, cleanup_on_error = True)
 
 # Remove temporary files created by pdflatex
 spawn('rm', '-rf', '--', tempdir, successful_exits = ...)

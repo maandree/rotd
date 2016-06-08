@@ -1,0 +1,38 @@
+#!/bin/sh
+
+file="$(curl 'https://en.wiktionary.org/wiki/Wiktionary:Word_of_the_day')"
+first=$(echo "$file" | grep -n 'mf-wotd' | cut -d : -f 1)
+file="$(echo "$file" | sed 1,${first}d)"
+last=$(echo "$file" | grep -n '</table>' | cut -d : -f 1)
+file="$(echo "$file" | sed ${last},\$d | sed 1d)"
+
+first=$(echo "$file" | grep -n '<tr>' | head -n 1 | cut -d : -f 1)
+last=$(echo "$file" | grep -n '</tr>' | head -n 1 | cut -d : -f 1)
+file="$(echo "$file" | sed ${first},${last}d)"
+
+first=$(echo "$file" | grep -n '<tr>' | tail -n 1 | cut -d : -f 1)
+last=$(echo "$file" | grep -n '</tr>' | tail -n 1 | cut -d : -f 1)
+file="$(echo "$file" | sed ${first},${last}d)"
+
+file="$(echo "$file" | sed 1d | sed 's/< *a [^>]*>//g' | sed 's/<\/a>//g' | sed 's/< *img[^>]*>//g')"
+
+word="$(echo "$file" | grep 'id="WOTD-rss-title"' | sed 's/<i>/(/g' | sed 's/<\/i>/)/g')"
+word="$(echo "$word" | sed 's/<[^>]*>//g')"
+
+first=$(echo "$file" | grep -n '<ol>' | head -n 1 | cut -d : -f 1)
+last=$(echo "$file" | grep -n '</ol>' | head -n 1 | cut -d : -f 1)
+file="$(echo "$file" | sed ${last},\$d | sed 1,${first}d)"
+
+file="$(echo "$file" | sed 's/<\/\?small>/\n&\n/g')"
+
+first=$(echo "$file" | grep -n '<small>' | tail -n 1 | cut -d : -f 1)
+last=$(echo "$file" | grep -n '</small>' | tail -n 1 | cut -d : -f 1)
+file="$(echo "$file" | sed ${first},${last}d)"
+
+file="$(echo "$file" | sed 's/<br *\/>//g' | sed 's/<\/li>//g' | sed 's/<li>/\\item\n/g' | sed '/^ *$/d')"
+
+word="$(echo "$word" | sed 's/ (/}&\\textsl{/g' | sed 's/)/}&/g')"
+printf '\\textbf{%s\n' "$word"
+printf '\\begin{itemize}\n'
+printf '%s\n' "$file"
+printf '\\end{itemize}\n'
