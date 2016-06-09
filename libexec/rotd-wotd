@@ -26,10 +26,13 @@ file="$(echo "$file" | sed ${last},\$d | sed 1,${first}d)"
 file="$(echo "$file" | sed 's/<\/\?small>/\n&\n/g')"
 
 first=$(echo "$file" | grep -n '<small>' | tail -n 1 | cut -d : -f 1)
-last=$(echo "$file" | grep -n '</small>' | tail -n 1 | cut -d : -f 1)
-file="$(echo "$file" | sed ${first},${last}d)"
+if test -n "$first"; then
+    last=$(echo "$file" | grep -n '</small>' | tail -n 1 | cut -d : -f 1)
+    file="$(echo "$file" | sed ${first},${last}d)"
+fi
 
 file="$(echo "$file" | sed 's/<br *\/>//g' | sed 's/<\/li>//g' | sed 's/<li>/\\item\n/g' | sed '/^ *$/d')"
+file="$(echo "$file" | sed 's/<[^>]*>//g')"
 
 word="$(echo "$word" | sed 's/ (/}&\\textsl{/g' | sed 's/)/}&/g')"
 printf '\\textbf{%s\n' "$word"
