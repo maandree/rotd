@@ -8,6 +8,7 @@ from fortune import *
 from events import *
 from wotd import *
 from leapsec import *
+from solar import *
 
 doc  = documentclass('memoir', '11pt', 'oneside', 'a4paper')
 doc += fontencoding('T1')
@@ -91,6 +92,21 @@ if word is not None:
     doc += sectionx(whiteonblack('Word of the day'))
     doc += word
     doc += '\n\n'
+
+try:
+    sol = Solar()
+except:
+    sol = None
+if sol is not None:
+    doc += sectionx(whiteonblack('Solar events'))
+    doc += '\\hspace*{-0.6em}'
+    doc += begin('tabular', 'll')
+    doc += ln(bf('Summer or winter: ', ' & ' + sol.season()))
+    doc += ln(bf('Next equinox: ',     ' & ' + sol.next_equinox()))
+    doc += ln(bf('Next solstice: ',    ' & ' + sol.next_solstice()))
+    doc += end('tabular')
+    doc += '\n\n'
+
 
 doc += end('document')
 write(doc)
