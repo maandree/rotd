@@ -13,7 +13,7 @@ if len(sys.argv) != 2:
     print('Usage: %s output-file' % argv0, file = sys.stderr)
     sys.exit(1)
 
-def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False, cleanup_on_error = False):
+def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False):
     '''
     Spawn a process without a stdin
     
@@ -23,7 +23,6 @@ def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False, cle
                                             `...` for never fail even if the command
                                             exited by a signal
     @param   get_stdout:bool                Should the process's stdout be returned
-    @param   cleanup_on_error:bool          Cleanup the temporary files before exiting on error
     @return  :str?                          The process's output to stdout, if `get_stdout`
     '''
     if get_stdout:
@@ -58,9 +57,6 @@ def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False, cle
         if os.WIFEXITED(status):
             if os.WEXITSTATUS(status) in successful_exits:
                 return output
-        if cleanup_on_error:
-            os.chdir(cwd)
-            spawn('rm', '-rf', '--', tempdir, successful_exits = ...)
         raise Exception('External command failed')
 
 def write(text):
@@ -150,13 +146,29 @@ if config_file is None:
     sys.exit(1)
 config_file = os.path.realpath(config_file)
 
-# Create and cd into temporary directory
+# Create temporary directory
 cwd = os.getcwd()
 tempdir = '/tmp/rotd.%f~%i.d' % (time.time(), os.getuid())
 os.mkdir(tempdir)
-os.chdir(tempdir)
+
+# Fork to ensure cleanup
+pid = os.fork()
+if pid != 0:
+    # Block signals
+    import signal
+    mask = [x for x in range(1, signal.NSIG) if x != signal.SIGCHLD]
+    signal.pthread_sigmask(signal.SIG_BLOCK, mask)
+    # Wait of child to die
+    pid, status = os.waitpid(pid, 0)
+    # Remove temporary files
+    spawn('rm', '-rf', '--', tempdir, successful_exits = ...)
+    # Unblock signals
+    signal.pthread_sigmask(signal.SIG_UNBLOCK, mask)
+    # Die like the child (if we are still alive)
+    sys.exit(os.WEXITSTATUS(status))
 
 # Open LaTeX file, used in function `write`
+os.chdir(tempdir)
 texfile = open('rotd.tex', 'ab')
 
 # Read configuration script file
@@ -173,8 +185,8 @@ exec(code, g)
 
 # Compile PDF file
 texfile.close()
-spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex', cleanup_on_error = True)
-spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex', cleanup_on_error = True)
+spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex')
+spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex')
 
 # Move or print file?
 print_output = False
@@ -199,7 +211,4 @@ if print_output:
         file.write(data)
         file.flush()
 else:
-    spawn('mv', '--', pdffile, output_file, cleanup_on_error = True)
-
-# Remove temporary files created by pdflatex
-spawn('rm', '-rf', '--', tempdir, successful_exits = ...)
+    spawn('mv', '--', pdffile, output_file)
