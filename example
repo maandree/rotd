@@ -26,6 +26,8 @@ def whiteonblack(text, end = ''):
 
 doc += begin('document')
 
+
+# (prologue)
 now = time.localtime()
 
 holidays = filter_events(swedish_holidays(), 30) # include for the next 30 days
@@ -35,6 +37,8 @@ if holidays is None:
 holiday_today    = now.tm_wday == 6 or len([x for _, x, __ in holidays if x == 0]) > 0
 holiday_tomorrow = now.tm_wday == 5 or len([x for _, x, __ in holidays if x == 1]) > 0
 
+
+## Misc.
 doc += begin('center')
 doc += Huge('Report of the day, %s' % time.strftime('%Y-(%m)%b-%d', now))
 doc += end('center')
@@ -48,6 +52,8 @@ doc += ln(bf('Holiday tomorrow?', ' & ' + ('believe so' if holiday_tomorrow else
 doc += end('tabular')
 doc += '\n\n'
 
+
+## GnuPG key-expiry
 keys = gnupg_expiry() # for 60 days: gnupg_expiry(60)
 if keys is not None and len(keys) > 0:
     doc += sectionx(whiteonblack('GnuPG key-expiry'))
@@ -58,6 +64,8 @@ if keys is not None and len(keys) > 0:
         doc += ln(text)
     doc += '\n\n'
 
+
+## Today's/Upcoming events
 events = holidays
 events += filter_events([('John Due\'s birthday', '07-01')], 30) # first of july, warn 30 days before
 events += filter_events(swedish_events())
@@ -79,6 +87,8 @@ if len(events) > 0:
             text = '\\textcolor{red!75!black}{%s}' % text
         doc += ln(text)
 
+
+## Fortune of the day
 quote = fortune() # params: max line, max columns, max tries, quote listing file
 if quote is not None:
     doc += sectionx(whiteonblack('Fortune of the day'))
@@ -87,12 +97,16 @@ if quote is not None:
     doc += end('verbatim')
     doc += '\n\n'
 
+
+## Word of the day
 word = wotd()
 if word is not None:
     doc += sectionx(whiteonblack('Word of the day'))
     doc += word
     doc += '\n\n'
 
+
+## Solar events
 try:
     sol = Solar()
 except:
@@ -113,5 +127,6 @@ if sol is not None:
     doc += '\n\n'
 
 
+## (done)
 doc += end('document')
 write(doc)
