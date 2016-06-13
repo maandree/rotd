@@ -39,10 +39,13 @@ holiday_today    = now.tm_wday == 6 or len([x for _, x, __ in holidays if x == 0
 holiday_tomorrow = now.tm_wday == 5 or len([x for _, x, __ in holidays if x == 1]) > 0
 
 
-## Misc.
+## Title
 doc += begin('center')
 doc += Huge('Report of the day, %s' % time.strftime('%Y-(%m)%b-%d', now))
 doc += end('center')
+
+
+## Misc.
 doc += '\n\n'
 doc += '\\hspace*{-2em}'
 doc += begin('tabular', 'll')
