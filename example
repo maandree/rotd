@@ -9,6 +9,7 @@ from events import *
 from wotd import *
 from leapsec import *
 from solar import *
+from summertime import *
 
 doc  = documentclass('memoir', '11pt', 'oneside', 'a4paper')
 doc += fontencoding('T1')
@@ -65,11 +66,18 @@ if keys is not None and len(keys) > 0:
     doc += '\n\n'
 
 
-## Today's/Upcoming events
+## Today's/Upcoming events, include switch from or to summer time
 events = holidays
-events += filter_events([('John Due\'s birthday', '07-01')], 30) # first of july, warn 30 days before
+events += filter_events([('John Doe\'s birthday', '07-01')], 30) # first of july, warn 30 days before
 events += filter_events(swedish_events())
 events += filter_events(leap_seconds_to_strings(leap_seconds(), include_desc = True))
+summer_time, date = is_summer_time()
+for i in range(30):
+    (summer_time_then, date) = is_summer_time(i + 1)
+    if summer_time_then != summer_time:
+        tz = 'summer time' if summer_time_then else 'standard time'
+        events.append(('Switch to %s' % tz, i + 1, date))
+        break
 events.sort(key = lambda x : x[1])
 today  = [e for e in events if e[1] == 0]
 events = [e for e in events if e[1] > 0]
