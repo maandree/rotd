@@ -181,18 +181,18 @@ class Solar:
         seconds  = lambda h, m, s : int(h) * 60 * 60 + int(m) * 60 + int(s)
         today    = [None if x is None else seconds(*(x.split(' ')[1].split(':'))) for x in today]
         tomorrow = [None if x is None else seconds(*(x.split(' ')[1].split(':'))) for x in tomorrow]
-        print(today)
-        print(tomorrow)
         one_day  = 24 * 60 * 60
-        for L in (today, tomorrow):
-            for i in range(5, 9):
-                if L[i] is None:
-                    L[i] = L[i - 1]
-            for i in reversed(range(0, 4)):
-                if L[i] is None:
-                    L[i] = L[i + 1]
-        for i in range(9):
-            tomorrow[i] += one_day
+        for i in range(5, 9):
+            if today[i] is None:
+                today[i] = today[i - 1]
+        for i in reversed(range(0, 4)):
+            if today[i] is None:
+                today[i] = today[i + 1]
+        for i in range(0, 4):
+            if tomorrow[i] is None:
+                tomorrow[i] = today[8 - i]
+            else:
+                tomorrow[i] += one_day
         def strise(s):
             if format is None:
                 return s
