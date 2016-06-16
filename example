@@ -27,6 +27,18 @@ def whiteonblack(text, end = ''):
 
 doc += begin('document')
 
+prologue = doc
+def standalonetest(content):
+    content = prologue + content + '\n' + end('document')
+    with open('stand-alone-test.tex', 'wb') as file:
+        file.write(content.encode('utf-8'))
+        file.flush()
+    try:
+        spawn('pdflatex', '-halt-on-error', '--', 'stand-alone-test.tex')
+    except:
+        return False
+    return True
+
 
 # (prologue)
 now = time.localtime()
@@ -100,21 +112,26 @@ if len(events) > 0:
 
 
 ## Fortune of the day
-quote = fortune() # params: max line, max columns, max tries, quote listing file
-if quote is not None:
-    doc += sectionx(whiteonblack('Fortune of the day'))
-    doc += begin('verbatim')
-    doc += quote + '\n'
-    doc += end('verbatim')
-    doc += '\n\n'
+quote_tries = 100
+while quote_tries > 0:
+    quote, quote_tries = fortune(max_tries = quote_tries)
+    if quote is not None:
+        quote = begin('verbatim') + quote + '\n' + end('verbatim')
+        if not standalonetest(quote):
+            continue
+        doc += sectionx(whiteonblack('Fortune of the day'))
+        doc += quote
+        doc += '\n\n'
+    break
 
 
 ## Word of the day
 word = wotd()
 if word is not None:
-    doc += sectionx(whiteonblack('Word of the day'))
-    doc += word
-    doc += '\n\n'
+    if standalonetest(word):
+        doc += sectionx(whiteonblack('Word of the day'))
+        doc += word
+        doc += '\n\n'
 
 
 ## Solar events

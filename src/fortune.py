@@ -9,17 +9,18 @@ def fortune(max_lines = 5, max_columns = 80, max_tries = 100, file = None):
     @param   max_columns:int  The maximum number of columns the quote may require
     @param   max_tries:int    The maximum number of tries before giving up
     @param   file:str?        The file from which to take the quote
-    @return  :str?            The quote in plain text, `None` on error
+    @return  :(str?, :int)    The quote in plain text, `None` on error, and
+                              the number of tries left (0 if first element is `None`)
     '''
     try:
         from subprocess import Popen, PIPE
         import time
-        for _ in range(max_tries):
+        for tries in range(max_tries):
             proc = Popen(['fortune', file] if file is not None else ['fortune'], stdout = PIPE)
             output = proc.communicate()[0].decode('utf-8', 'strict')
             lines = output.split('\n')
             if len(lines) <= max_lines and max(len(x) for x in lines) <= max_columns:
-                return output
+                return (output, max_tries - 1 - tries)
     except:
         pass
-    return None
+    return (None, 0)

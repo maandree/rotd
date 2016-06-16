@@ -7,8 +7,3 @@ New features:
 	Moon's phase
 	SMART monitor warnings
 	Plots
-
-Existing features:
-	fortune; word of the day:
-		Try to build stand-alone to determine
-		whether the entry can be compiled.
