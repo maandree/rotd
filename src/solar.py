@@ -144,3 +144,68 @@ class Solar:
         t9 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_ASTRONOMICAL_DUSK_DAWN, end)
         t = (t1, t2, t3, t4, t5, t6, t7, t8, t9)
         return tuple(Solar.__jc_to_str(x) if x and start <= x <= end is not None else None for x in t)
+    
+    
+    def lengths(self, today, tomorrow, format = '%ih %i\' %i\'\'', solar_noon_string = ''):
+        '''
+        Calculate the length of the day and night, measures from
+        astronomical dawn/dusk, nautical dawn/dusk, civil dawn/dusk,
+        and sunrise/sunset.
+        
+        @param   today:(str?{4}, str, str?{4})      Values returned for `self.elevations(n)`,
+                                                    where `n` is any integer
+        @param   tomorrow,:(str?{4}, str, str?{4})  Values returned for `self.elevations(n + 1)`,
+                                                    where `n` is the same as in `today`
+        @param   format:str?                        The format for the returned strings,
+                                                    must take three integers, in order:
+                                                    hours, minutes, and seconds, or
+                                                    `None` if the total seconds shall be
+                                                    returned integers
+        @param   solar_noon_string:str?             The strings to return in the middle of the
+                                                    returned tuple, `None` if it should be omitted
+        @return  :(str{9|8})|(int{9|8})             0: The duration between astronomical dawn and
+                                                       astronomical dusk
+                                                    1: The duration between nautical dawn and
+                                                       nautical dusk
+                                                    2: The duration between civil dawn and civil dusk
+                                                    3: The duration between sunrise and sunset
+                                                    4: `solar_noon_string`, omitted if
+                                                       `solar_noon_string` is `None`
+                                                    5: The duration between sunset and sunrise
+                                                    6: The duration between civil dusk and civil dawn
+                                                    7: The duration between astronomical dusk and
+                                                       astronomical dawn
+                                                    8: The duration between nautical dusk and
+                                                       nautical dawn
+        '''
+        seconds  = lambda h, m, s : int(h) * 60 * 60 + int(m) * 60 + int(s)
+        today    = [None if x is None else seconds(*(x.split(' ')[1].split(':'))) for x in today]
+        tomorrow = [None if x is None else seconds(*(x.split(' ')[1].split(':'))) for x in tomorrow]
+        print(today)
+        print(tomorrow)
+        one_day  = 24 * 60 * 60
+        for L in (today, tomorrow):
+            for i in range(5, 9):
+                if L[i] is None:
+                    L[i] = L[i - 1]
+            for i in reversed(range(0, 4)):
+                if L[i] is None:
+                    L[i] = L[i + 1]
+        for i in range(9):
+            tomorrow[i] += one_day
+        def strise(s):
+            if format is None:
+                return s
+            m, s = s // 60, s % 60
+            h, m = m // 60, m % 60
+            return format % (h, m, s)
+        day = [strise(today[8] - today[0]),
+               strise(today[7] - today[1]),
+               strise(today[6] - today[2]),
+               strise(today[5] - today[3])]
+        noon = [] if solar_noon_string is None else [solar_noon_string]
+        night = [strise(tomorrow[3] - today[5]),
+                 strise(tomorrow[2] - today[6]),
+                 strise(tomorrow[1] - today[7]),
+                 strise(tomorrow[0] - today[8])]
+        return tuple(day + noon + night)

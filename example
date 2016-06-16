@@ -142,15 +142,16 @@ except:
 if sol is not None:
     doc += sectionx(whiteonblack('Solar events'))
     doc += '\\hspace*{-0.6em}'
-    doc += begin('tabular', 'lll')
-    doc += ln(bf('Summer or winter: ', ' & %s &' % sol.season()))
-    doc += ln(bf('Next equinox: ',     ' & %s &' % sol.next_equinox()))
-    doc += ln(bf('Next solstice: ',    ' & %s &' % sol.next_solstice()))
+    doc += begin('tabular', 'llll')
+    doc += ln(bf('Summer or winter: ', ' & %s & &' % sol.season()))
+    doc += ln(bf('Next equinox: ',     ' & %s & &' % sol.next_equinox()))
+    doc += ln(bf('Next solstice: ',    ' & %s & &' % sol.next_solstice()))
     elevs = ['Astronomical dawn', 'Nautical dawn', 'Civil dawn', 'Sunrise', 'Solar noon',
              'Sunset', 'Civil dusk', 'Nautical dusk', 'Astronomical dusk']
     n = lambda x : '—' if x is None else x
-    for elev, today, tomorrow in zip(elevs, sol.elevations(0), sol.elevations(1)):
-        doc += ln(bf('%s: ' % elev, ' & %s & %s' % (n(today), n(tomorrow))))
+    today, tomorrow = sol.elevations(0), sol.elevations(1)
+    for elev, today, tomorrow, length in zip(elevs, today, tomorrow, sol.lengths(today, tomorrow)):
+        doc += ln(bf('%s: ' % elev, ' & %s & %s & %s' % (n(today), n(tomorrow), length)))
     doc += end('tabular')
     doc += '\n\n'
 
