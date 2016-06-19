@@ -105,27 +105,17 @@ def swedish_holidays():
         rc.append(('Nyårsdagen',           '%i-01-01' % y))
         rc.append(('Trettondagsafton',     '%i-01-05' % y))
         rc.append(('Trettondedag jul',     '%i-01-06' % y))
-        rc.append(('Valborgsmässoafton',   '%i-04-30' % y))
         rc.append(('Första maj',           '%i-05-01' % y))
         rc.append(('Sveriges nationaldag', '%i-06-06' % y))
-        rc.append(('Julafton',             '%i-12-24' % y))
         rc.append(('Juldagen',             '%i-12-25' % y))
         rc.append(('Annandag jul',         '%i-12-26' % y))
-        rc.append(('Nyårsafton',           '%i-12-31' % y))
-        rc.append(('Midsommarafton',       first_weekday(4, '%i-06-19' % y)))
         rc.append(('Midsommardagen',       first_weekday(5, '%i-06-20' % y)))
-        rc.append(('Allhelgonaafton',      first_weekday(4, '%i-10-30' % y)))
         rc.append(('Alla helgons dag',     first_weekday(5, '%i-10-31' % y)))
         if easter is not None:
             (em, ed) = easter
-            rc.append(('Påskdagen',              date_to_string(y, em, ed)))
             rc.append(('Annandag påsk',          date_to_string(y, em, ed + 1)))
-            rc.append(('Påskafton',              date_to_string(y, em, ed - 1)))
             rc.append(('Långfredagen',           date_to_string(y, em, ed - 2)))
-            rc.append(('Skärtorsdagen',          date_to_string(y, em, ed - 3)))
             rc.append(('Kristi himmelsfärdsdag', date_to_string(y, em, ed + 4 + 5 * 7)))
-            rc.append(('Pingstdagen',            date_to_string(y, em, ed + 7 * 7)))
-            rc.append(('Pingstafton',            date_to_string(y, em, ed + 7 * 7 - 1)))
     rc.sort(key = lambda x : x[1])
     return rc
 
@@ -152,9 +142,19 @@ def swedish_events(only_common = False):
         rc.append(('Första april',                '%i-04-01' % y))
         rc.append(('Valborgsmässoafton',          '%i-04-30' % y))
         rc.append(('Första maj',                  '%i-05-01' % y))
+        rc.append(('Valborgsmässoafton',          '%i-04-30' % y))
+        rc.append(('Midsommarafton',              first_weekday(4, '%i-06-19' % y)))
+        rc.append(('Julafton',                    '%i-12-24' % y))
+        rc.append(('Allhelgonaafton',             first_weekday(4, '%i-10-30' % y)))
+        rc.append(('Nyårsafton',                  '%i-12-31' % y))
         if easter is not None:
             (em, ed) = easter
-            rc.append(('Fettisdagen', date_to_string(y, em, ed - 47)))
+            rc.append(('Skärtorsdagen', date_to_string(y, em, ed - 3)))
+            rc.append(('Påskdagen',     date_to_string(y, em, ed)))
+            rc.append(('Påskafton',     date_to_string(y, em, ed - 1)))
+            rc.append(('Pingstdagen',   date_to_string(y, em, ed + 7 * 7)))
+            rc.append(('Pingstafton',   date_to_string(y, em, ed + 7 * 7 - 1)))
+            rc.append(('Fettisdagen',   date_to_string(y, em, ed - 47)))
         if not only_common:
             rc.append(('Förintelsens minnesdag',                        '%i-01-27' % y))
             rc.append(('Världsreligionsdagen',                          first_weekday(6, '%i-1-1' % y, 6 * 7)))
