@@ -47,8 +47,9 @@ holidays = filter_events(swedish_holidays(), 30) # include for the next 30 days
 if holidays is None:
     holidays = []
 
-holiday_today    = now.tm_wday == 6 or len([x for _, x, __ in holidays if x == 0]) > 0
-holiday_tomorrow = now.tm_wday == 5 or len([x for _, x, __ in holidays if x == 1]) > 0
+holiday_today    = 2 if now.tm_wday == 6 else (1 if len([x for _, x, __ in holidays if x == 0]) > 0 else 0)
+holiday_tomorrow = 2 if now.tm_wday == 5 else (1 if len([x for _, x, __ in holidays if x == 1]) > 0 else 0)
+holiday_str = ('don\'t think so', 'believe so', 'yes')
 
 
 ## Title
@@ -63,8 +64,8 @@ doc += '\\hspace*{-2em}'
 doc += begin('tabular', 'll')
 doc += ln(bf('Week:', ' & ' + time.strftime('%W', now)))
 doc += ln(bf('Weekday:', ' & ' + time.strftime('%A', now)))
-doc += ln(bf('Holiday today?', ' & ' + ('believe so' if holiday_today else 'don\'t think so')))
-doc += ln(bf('Holiday tomorrow?', ' & ' + ('believe so' if holiday_tomorrow else 'don\'t think so')))
+doc += ln(bf('Holiday today?', ' & ' + holiday_str[holiday_today]))
+doc += ln(bf('Holiday tomorrow?', ' & ' + holiday_str[holiday_tomorrow]))
 doc += end('tabular')
 doc += '\n\n'
 
