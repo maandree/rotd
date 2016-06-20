@@ -112,7 +112,6 @@ def swedish_holidays():
     for y in (year, year + 1):
         (em, ed) = western_easter(y)
         rc.append(('Nyårsdagen',             '%i-01-01' % y))
-        rc.append(('Trettondagsafton',       '%i-01-05' % y))
         rc.append(('Trettondedag jul',       '%i-01-06' % y))
         rc.append(('Första maj',             '%i-05-01' % y))
         rc.append(('Sveriges nationaldag',   '%i-06-06' % y))
@@ -144,6 +143,7 @@ def swedish_events(only_common = False):
     rc = []
     for y in (year, year + 1):
         (em, ed) = western_easter(y)
+        rc.append(('Trettondagsafton',            '%i-01-05' % y))
         rc.append(('Alla hjärtans dag',           '%i-02-14' % y))
         rc.append(('Internationella kvinnodagen', '%i-03-08' % y))
         rc.append(('Första april',                '%i-04-01' % y))
