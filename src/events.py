@@ -50,7 +50,7 @@ def first_weekday(weekday, first, extra_days = 0):
 def weekday_in_week(weekday, year, mon, week, extra_days = 0):
     import time
     date = time.strptime('%i-%02i-01' % (year, mon), '%Y-%m-%d')
-    mday = 1 - date.tm_wday + 7 * (week - 1)
+    mday = 1 - date.tm_wday + 7 * (week - 1) + extra_days
     return date_to_string(year, mon, mday)
 
 
