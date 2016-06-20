@@ -162,7 +162,7 @@ def swedish_events(only_common = False):
         rc.append(('Fettisdagen',                 date_to_string(y, em, ed - 47)))
         if not only_common:
             rc.append(('Förintelsens minnesdag',                        '%i-01-27' % y))
-            rc.append(('Världsreligionsdagen',                          first_weekday(6, '%i-1-1' % y, 6 * 7)))
+            rc.append(('Världsreligionsdagen',                          first_weekday(6, '%i-01-01' % y, 6 * 7)))
             rc.append(('Darwindagen',                                   '%i-02-12' % y))
             rc.append(('Internationella modersmålsdagen',               '%i-02-21' % y))
             rc.append(('Föredetta skottdagen',                          '%i-02-24' % y))
