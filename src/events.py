@@ -80,15 +80,24 @@ def western_easter(year):
     '''
     Get the date of the Western Easter
     
-    @param   year:int                The year
-    @return  :(month:int, day:int)?  The month and the day when easter occurs,
-                                     `None` if the date is unknown
+    @param   year:int               The year
+    @return  :(month:int, day:int)  The month and the day when easter occurs
     '''
-    year = year - 2016
-    dates = [(3, 27), (4, 16), (4, 1), (4, 21), (4, 12), (4, 4), (4, 17), (4, 9),
-             (3, 31), (4, 20), (4, 5), (3, 28), (4, 16), (4, 1), (4, 21), (4, 13),
-             (3, 28), (4, 17), (4, 9), (3, 25), (4, 13)]
-    return None if year >= len(dates) else dates[year]
+    a = year % 19;
+    b = year // 100;
+    c = year % 100;
+    d = b // 4;
+    e = b % 4;
+    f = (b + 8) // 25;
+    g = (b - f + 1) // 3;
+    h = (19 * a + b - d - g + 15) % 30;
+    i = c // 4;
+    k = c % 4;
+    l = (32 + 2 * e + 2 * i - h - k) % 7;
+    m = (a + 11 * h + 22 * l) // 451;
+    n = (h + l - 7 * m + 114) // 31;
+    p = (h + l - 7 * m + 114) % 31;
+    return (n, p + 1)
 
 
 def swedish_holidays():
@@ -101,21 +110,19 @@ def swedish_holidays():
     year = time.localtime().tm_year
     rc = []
     for y in (year, year + 1):
-        easter = western_easter(y)
-        rc.append(('Nyårsdagen',           '%i-01-01' % y))
-        rc.append(('Trettondagsafton',     '%i-01-05' % y))
-        rc.append(('Trettondedag jul',     '%i-01-06' % y))
-        rc.append(('Första maj',           '%i-05-01' % y))
-        rc.append(('Sveriges nationaldag', '%i-06-06' % y))
-        rc.append(('Juldagen',             '%i-12-25' % y))
-        rc.append(('Annandag jul',         '%i-12-26' % y))
-        rc.append(('Midsommardagen',       first_weekday(5, '%i-06-20' % y)))
-        rc.append(('Alla helgons dag',     first_weekday(5, '%i-10-31' % y)))
-        if easter is not None:
-            (em, ed) = easter
-            rc.append(('Annandag påsk',          date_to_string(y, em, ed + 1)))
-            rc.append(('Långfredagen',           date_to_string(y, em, ed - 2)))
-            rc.append(('Kristi himmelsfärdsdag', date_to_string(y, em, ed + 4 + 5 * 7)))
+        (em, ed) = western_easter(y)
+        rc.append(('Nyårsdagen',             '%i-01-01' % y))
+        rc.append(('Trettondagsafton',       '%i-01-05' % y))
+        rc.append(('Trettondedag jul',       '%i-01-06' % y))
+        rc.append(('Första maj',             '%i-05-01' % y))
+        rc.append(('Sveriges nationaldag',   '%i-06-06' % y))
+        rc.append(('Juldagen',               '%i-12-25' % y))
+        rc.append(('Annandag jul',           '%i-12-26' % y))
+        rc.append(('Midsommardagen',         first_weekday(5, '%i-06-20' % y)))
+        rc.append(('Alla helgons dag',       first_weekday(5, '%i-10-31' % y)))
+        rc.append(('Annandag påsk',          date_to_string(y, em, ed + 1)))
+        rc.append(('Långfredagen',           date_to_string(y, em, ed - 2)))
+        rc.append(('Kristi himmelsfärdsdag', date_to_string(y, em, ed + 4 + 5 * 7)))
     rc.sort(key = lambda x : x[1])
     return rc
 
@@ -136,7 +143,7 @@ def swedish_events(only_common = False):
     year = time.localtime().tm_year
     rc = []
     for y in (year, year + 1):
-        easter = western_easter(y)
+        (em, ed) = western_easter(y)
         rc.append(('Alla hjärtans dag',           '%i-02-14' % y))
         rc.append(('Internationella kvinnodagen', '%i-03-08' % y))
         rc.append(('Första april',                '%i-04-01' % y))
@@ -147,14 +154,12 @@ def swedish_events(only_common = False):
         rc.append(('Julafton',                    '%i-12-24' % y))
         rc.append(('Allhelgonaafton',             first_weekday(4, '%i-10-30' % y)))
         rc.append(('Nyårsafton',                  '%i-12-31' % y))
-        if easter is not None:
-            (em, ed) = easter
-            rc.append(('Skärtorsdagen', date_to_string(y, em, ed - 3)))
-            rc.append(('Påskdagen',     date_to_string(y, em, ed)))
-            rc.append(('Påskafton',     date_to_string(y, em, ed - 1)))
-            rc.append(('Pingstdagen',   date_to_string(y, em, ed + 7 * 7)))
-            rc.append(('Pingstafton',   date_to_string(y, em, ed + 7 * 7 - 1)))
-            rc.append(('Fettisdagen',   date_to_string(y, em, ed - 47)))
+        rc.append(('Skärtorsdagen',               date_to_string(y, em, ed - 3)))
+        rc.append(('Påskdagen',                   date_to_string(y, em, ed)))
+        rc.append(('Påskafton',                   date_to_string(y, em, ed - 1)))
+        rc.append(('Pingstdagen',                 date_to_string(y, em, ed + 7 * 7)))
+        rc.append(('Pingstafton',                 date_to_string(y, em, ed + 7 * 7 - 1)))
+        rc.append(('Fettisdagen',                 date_to_string(y, em, ed - 47)))
         if not only_common:
             rc.append(('Förintelsens minnesdag',                        '%i-01-27' % y))
             rc.append(('Världsreligionsdagen',                          first_weekday(6, '%i-1-1' % y, 6 * 7)))
