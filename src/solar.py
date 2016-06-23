@@ -161,7 +161,7 @@ class Solar:
                                                     must take three integers, in order:
                                                     hours, minutes, and seconds, or
                                                     `None` if the total seconds shall be
-                                                    returned integers
+                                                    returned as integers
         @param   solar_noon_string:str?             The strings to return in the middle of the
                                                     returned tuple, `None` if it should be omitted
         @return  :(str{9|8})|(int{9|8})             0: The duration between astronomical dawn and
