@@ -81,7 +81,7 @@ class Solar:
         '''
         Get the time of the next equinox
         
-        Will be off by a few hours from aa.usno.navy.mil/data/docs/EarthSeasons.php,
+        Will be off by a few minutes from aa.usno.navy.mil/data/docs/EarthSeasons.php,
         I don't know why, and I don't know which is more correct. Our times are
         calculated using interpolation, I don't know how aa.usno.navy.mil does
         it, but probably with a formula.
@@ -96,7 +96,7 @@ class Solar:
         '''
         Get the time of the next solstice
         
-        Will be off by a few hours from aa.usno.navy.mil/data/docs/EarthSeasons.php,
+        Will be off by a few minutes from aa.usno.navy.mil/data/docs/EarthSeasons.php,
         I don't know why, and I don't know which is more correct. Our times are
         calculated using interpolation, I don't know how aa.usno.navy.mil does
         it, but probably with a formula.
