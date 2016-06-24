@@ -160,6 +160,10 @@ def swedish_events(only_common = False):
         rc.append(('Pingstdagen',                 date_to_string(y, em, ed + 7 * 7)))
         rc.append(('Pingstafton',                 date_to_string(y, em, ed + 7 * 7 - 1)))
         rc.append(('Fettisdagen',                 date_to_string(y, em, ed - 47)))
+        rc.append(('Första söndagen i advent',    first_weekday(6, '%i-11-27' % y)))
+        rc.append(('Andra söndagen i advent',     first_weekday(6, '%i-12-04' % y)))
+        rc.append(('Tredje söndagen i advent',    first_weekday(6, '%i-12-11' % y)))
+        rc.append(('Fjärde söndagen i advent',    first_weekday(6, '%i-12-18' % y)))
         if not only_common:
             rc.append(('Palmsöndagen',                                  date_to_string(y, em, ed - 7)))
             rc.append(('Förintelsens minnesdag',                        '%i-01-27' % y))
