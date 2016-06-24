@@ -149,7 +149,6 @@ def swedish_events(only_common = False):
         rc.append(('Första april',                '%i-04-01' % y))
         rc.append(('Valborgsmässoafton',          '%i-04-30' % y))
         rc.append(('Första maj',                  '%i-05-01' % y))
-        rc.append(('Valborgsmässoafton',          '%i-04-30' % y))
         rc.append(('Midsommarafton',              first_weekday(4, '%i-06-19' % y)))
         rc.append(('Julafton',                    '%i-12-24' % y))
         rc.append(('Allhelgonaafton',             first_weekday(4, '%i-10-30' % y)))
