@@ -150,6 +150,7 @@ def swedish_events(only_common = False):
         rc.append(('Valborgsmässoafton',          '%i-04-30' % y))
         rc.append(('Första maj',                  '%i-05-01' % y))
         rc.append(('Midsommarafton',              first_weekday(4, '%i-06-19' % y)))
+        rc.append(('Lucia',                       '%i-12-13' % y))
         rc.append(('Julafton',                    '%i-12-24' % y))
         rc.append(('Allhelgonaafton',             first_weekday(4, '%i-10-30' % y)))
         rc.append(('Nyårsafton',                  '%i-12-31' % y))
@@ -160,6 +161,7 @@ def swedish_events(only_common = False):
         rc.append(('Pingstafton',                 date_to_string(y, em, ed + 7 * 7 - 1)))
         rc.append(('Fettisdagen',                 date_to_string(y, em, ed - 47)))
         if not only_common:
+            rc.append(('Palmsöndagen',                                  date_to_string(y, em, ed - 7)))
             rc.append(('Förintelsens minnesdag',                        '%i-01-27' % y))
             rc.append(('Världsreligionsdagen',                          first_weekday(6, '%i-01-01' % y, 6 * 7)))
             rc.append(('Darwindagen',                                   '%i-02-12' % y))
