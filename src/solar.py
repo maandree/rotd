@@ -137,12 +137,15 @@ class Solar:
         t2 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_NAUTICAL_DUSK_DAWN, start)
         t3 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_CIVIL_DUSK_DAWN, start)
         t4 = s.future_elevation(self.lat, self.lon, PROPER_SUNSET_SUNRISE, start)
-        t5 = s.future_elevation_derivative(self.lat, self.lon, 0, start)
-        t5 = s.future_elevation_derivative(self.lat, self.lon, 0, t5 + 0.000001)
+        t5a = s.future_elevation_derivative(self.lat, self.lon, 0, start)
+        t5b = s.future_elevation_derivative(self.lat, self.lon, 0, t5a + 0.000001)
         t6 = s.past_elevation(self.lat, self.lon, PROPER_SUNSET_SUNRISE, end)
         t7 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_CIVIL_DUSK_DAWN, end)
         t8 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_NAUTICAL_DUSK_DAWN, end)
         t9 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_ASTRONOMICAL_DUSK_DAWN, end)
+        e1 = s.solar_elevation(self.lat, self.lon, t5a)
+        e2 = s.solar_elevation(self.lat, self.lon, t5b)
+        t5 = t5a if e1 > e2 else t5b
         t = (t1, t2, t3, t4, t5, t6, t7, t8, t9)
         return tuple(Solar.__jc_to_str(x) if x and start <= x <= end is not None else None for x in t)
     
