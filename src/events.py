@@ -19,7 +19,10 @@ def filter_events(events, inclusion_period = 10):
         import time
         now = time.localtime()
         year = now.tm_year
-        now = int(time.strftime('%s', now)) // 60 // 60 // 24
+        tz = time.strftime('%z', now)
+        tz = (int(tz[:3]) * 60 + int(tz[:1] + tz[3:])) * 60
+        now = int(time.strftime('%s', now))
+        a_day = 60 * 60 * 24
         rc = []
         more_events = []
         for evs in (events, more_events):
@@ -28,12 +31,13 @@ def filter_events(events, inclusion_period = 10):
                     more_events.append((data, '%i-%s' % (year + 1, date)))
                     date = '%i-%s' % (year, date)
                 date = time.strptime(date, '%Y-%m-%d')
-                days = int(time.strftime('%s', date)) // 60 // 60 // 24 - now
+                days = (int(time.strftime('%s', date)) + tz) // a_day - now // a_day
                 if days >= 0 and days < inclusion_period:
                     rc.append((data, days, date))
         rc.sort(key = lambda x : x[1])
         return rc
-    except:
+    except Exception as e:
+        raise e
         return None
 
 
