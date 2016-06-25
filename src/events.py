@@ -174,7 +174,8 @@ def swedish_events(only_common = False):
             rc.append(('Världsreligionsdagen',                          first_weekday(6, '%i-01-01' % y, 6 * 7)))
             rc.append(('Darwindagen',                                   '%i-02-12' % y))
             rc.append(('Internationella modersmålsdagen',               '%i-02-21' % y))
-            rc.append(('Föredetta skottdagen',                          '%i-02-24' % y))
+            if y % 400 == 0 or (y % 4 == 0 and not y % 100 == 0):
+                rc.append(('Föredetta skottdagen',                      '%i-02-24' % y))
             rc.append(('Kyndelsmässodagen',                             '%i-02-02' % y))
             rc.append(('Sverigefinnarnas dag',                          '%i-02-24' % y))
             rc.append(('Internationella vattendagen',                   '%i-03-22' % y))
