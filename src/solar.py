@@ -136,7 +136,7 @@ class Solar:
         t1 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_ASTRONOMICAL_DUSK_DAWN, start)
         t2 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_NAUTICAL_DUSK_DAWN, start)
         t3 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_CIVIL_DUSK_DAWN, start)
-        t4 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_SUNSET_SUNRISE, start)
+        t4 = s.future_elevation(self.lat, self.lon, PROPER_SUNSET_SUNRISE, start)
         t5 = s.future_elevation_derivative(self.lat, self.lon, 0, start)
         t5 = s.future_elevation_derivative(self.lat, self.lon, 0, t5 + 0.000001)
         t6 = s.past_elevation(self.lat, self.lon, PROPER_SUNSET_SUNRISE, end)
