@@ -195,6 +195,7 @@ def swedish_events(only_common = False):
             rc.append(('Internationella heraldikdagen',                 '%i-06-10' % y))
             rc.append(('Mobilfria dagen',                               '%i-06-01' % y))
             rc.append(('Världsmiljödagen',                              '%i-06-05' % y))
+            rc.append(('Den helige Johannes Döparens dag',              first_weekday(6, '%i-06-21' % y)))
             rc.append(('Mandeladagen',                                  '%i-07-18' % y))
             rc.append(('Sjusovardagen',                                 '%i-07-27' % y))
             rc.append(('Victoriadagen',                                 '%i-07-14' % y))
@@ -221,6 +222,7 @@ def swedish_events(only_common = False):
             rc.append(('Vegetariska världsdagen',                       '%i-10-01' % y))
             rc.append(('Världshungerdagen',                             '%i-10-16' % y))
             rc.append(('Alla själars dag',                              '%i-11-02' % y))
+            rc.append(('Allhelgonadagen',                               '%i-11-01' % y))
             rc.append(('Arkivens dag',                                  first_weekday(5, '%i-11-01' % y, 7)))
             rc.append(('Gustav Adolfsdagen',                            '%i-11-06' % y))
             rc.append(('Internationella dagen mot våld mot kvinnor',    '%i-11-25' % y)) # déjà vu...
