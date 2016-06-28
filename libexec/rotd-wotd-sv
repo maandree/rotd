@@ -1,0 +1,35 @@
+#!/bin/sh
+
+file="$(curl 'https://sv.wiktionary.org/wiki/Wiktionary:Huvudsida')"
+first=$(echo "${file}" | grep -n 'id="Veckans_ord"' | cut -d : -f 1)
+file="$(echo "${file}" | sed 1,${first}d)"
+
+word="$(echo "${file}" | grep '<big>' | head -n 1)"
+word="$(echo "${word}" | sed 's/<[^>]*>//g')"
+
+first=$(echo "${file}" | grep -n '<big>' | cut -d : -f 1)
+file="$(echo "${file}" | sed 1,${first}d)"
+
+type=$(expr $(echo "${file}" | grep -n 'Ordklass:' | cut -d : -f 1) + 1)
+type="$(echo "${file}" | head -n $type | tail -n 1)"
+type="$(echo "${type}" | sed 's/<[^>]*>//g')"
+
+first=$(echo "${file}" | grep -n 'Definition:' | cut -d : -f 1)
+file="$(echo "${file}" | sed 1,${first}d)"
+first=$(echo "${file}" | grep -n '<ol>' | head -n 1 | cut -d : -f 1)
+last=$(echo "${file}" | grep -n '</ol>' | head -n 1 | cut -d : -f 1)
+file="$(echo "${file}" | sed ${last},\$d | sed 1,${first}d)"
+
+file="$(echo "${file}" | sed 's/<br *\/>//g' | sed 's/<\/li>//g' | sed 's/<li>/\\item\n/g' | sed '/^ *$/d')"
+file="$(echo "${file}" | sed 's/<[^>]*>//g')"
+
+printf '\\textbf{%s} (\\textsl{%s})\n' "$word" "$type"
+printf '\\begin{itemize}\n'
+printf '%s\n' "$file"
+printf '\\end{itemize}\n'
+
+exit 0
+
+
+word="$(echo "$word" | sed 's/ (/}&\\textsl{/g' | sed 's/)/}&/g')"
+printf '\\textbf{%s\n' "$word"

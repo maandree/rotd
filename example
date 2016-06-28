@@ -127,12 +127,20 @@ while quote_tries > 0:
 
 
 ## Word of the day
-word = wotd()
-if word is not None:
-    if standalonetest(word):
-        doc += sectionx(whiteonblack('Word of the day'))
-        doc += word
-        doc += '\n\n'
+have_wotd = False
+wday = time.localtime().tm_wday
+for lang, wdays in [('en', None), ('sv', [0, 1])]:
+    if wdays is not None and wday not in wdays:
+        continue
+    word = wotd(lang = lang)
+    if word is not None:
+        if standalonetest(word):
+            if not have_wotd:
+                doc += sectionx(whiteonblack('Word of the day'))
+                have_wotd = True
+            doc += '\\noindent\n'
+            doc += word
+            doc += '\n\n'
 
 
 ## Solar events
