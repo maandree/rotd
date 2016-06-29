@@ -201,6 +201,7 @@ def swedish_events(only_common = False):
             rc.append(('Mobilfria dagen',                               '%i-06-01' % y))
             rc.append(('Världsmiljödagen',                              '%i-06-05' % y))
             rc.append(('Den helige Johannes Döparens dag',              first_weekday(6, '%i-06-21' % y)))
+            rc.append(('Tau-dagen',                                     '%i-06-28' % y))
             rc.append(('Mandeladagen',                                  '%i-07-18' % y))
             rc.append(('Sjusovardagen',                                 '%i-07-27' % y))
             rc.append(('Victoriadagen',                                 '%i-07-14' % y))
