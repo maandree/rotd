@@ -7,11 +7,7 @@ global spawn, write, LIBEXEC
 
 LIBEXEC = os.getcwd() + ('/..' if os.getcwd().endswith('/src') else '') + '/libexec'
 
-# Check argv
-if len(sys.argv) != 2:
-    argv0 = 'rotd' if len(sys.argv) == 0 else sys.argv[0]
-    print('Usage: %s output-file' % argv0, file = sys.stderr)
-    sys.exit(1)
+argv0 = 'rotd' if len(sys.argv) == 0 else sys.argv[0]
 
 def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False):
     '''
@@ -74,7 +70,7 @@ def write(text):
 # Get current globals
 g = globals()
 
-## Set process title
+# Set process title
 def setproctitle(title):
     '''
     Set process title
@@ -102,45 +98,74 @@ def setproctitle(title):
             libc.setproctitle(ctypes.create_string_buffer(b'-%s'), title)
     except:
         pass
-setproctitle(sys.argv[0])
+setproctitle(argv0)
+
+# Parse command line
+def usage():
+    print('Usage: %s [-c config-file] output-file' % argv0, file = sys.stderr)
+    sys.exit(1)
+config_file = None
+i, n = 1, len(sys.argv)
+while i < n:
+    arg = sys.argv[i]
+    if arg.startswith('--'):
+        i += 1
+        break
+    elif arg.startswith('-'):
+        if arg.startswith('-c'):
+            if arg == '-c':
+                if i == n:
+                    usage()
+                i += 1
+                config_file = sys.argv[i]
+            else:
+                config_file = arg[2:]
+        else:
+            usage()
+    else:
+        break
+    i += 1
+if i + 1 != n:
+    usage()
+output_file = sys.argv[i]
 
 # Find configuration script
-config_file = None
-# Possible auto-selected configuration scripts,
-# earlier ones have precedence, we can only select one.
-for file in ('$ROTD_SCRIPT', '$XDG_CONFIG_HOME/%/%rc', '$HOME/.config/%/%rc', '$HOME/.%rc', '$~/.config/%/%rc', '$~/.%rc', '/etc/%rc'):
-    # Expand short-hands
-    file = file.replace('/', os.sep).replace('%', 'rotd')
-    # Expand environment variables
-    for arg in ('ROTD_SCRIPT', 'XDG_CONFIG_HOME', 'HOME'):
-        # Environment variables are prefixed with $
-        if '$' + arg in file:
-            if arg in os.environ:
-                # To be sure that do so no treat a $ as a variable prefix
-                # incorrectly we replace any $ in the value of the variable
-                # with NUL which is not a value pathname character.
-                file = file.replace('$' + arg, os.environ[arg].replace('$', '\0'))
-            else:
-                file = None
+if config_file is None:
+    # Possible auto-selected configuration scripts,
+    # earlier ones have precedence, we can only select one.
+    for file in ('$XDG_CONFIG_HOME/%/%rc', '$HOME/.config/%/%rc', '$HOME/.%rc', '$~/.config/%/%rc', '$~/.%rc', '/etc/%rc'):
+        # Expand short-hands
+        file = file.replace('/', os.sep).replace('%', 'rotd')
+        # Expand environment variables
+        for arg in ('XDG_CONFIG_HOME', 'HOME'):
+            # Environment variables are prefixed with $
+            if '$' + arg in file:
+                if arg in os.environ:
+                    # To be sure that do so no treat a $ as a variable prefix
+                    # incorrectly we replace any $ in the value of the variable
+                    # with NUL which is not a value pathname character.
+                    file = file.replace('$' + arg, os.environ[arg].replace('$', '\0'))
+                else:
+                    file = None
+                    break
+        # Proceed if there where no errors
+        if file is not None:
+            # With use $~ (instead of ~) for the user's proper home
+            # directroy. HOME should be defined, but it could be missing.
+            # It could also be set to another directory.
+            if file.startswith('$~'):
+                import pwd
+                # Get the home (also known as initial) directory
+                # of the real user, and the rest of the path
+                file = pwd.getpwuid(os.getuid()).pw_dir + file[2:]
+            # Now that we are done we can change back any NUL to $:s
+            file = file.replace('\0', '$')
+            # If the file we exists,
+            if os.path.exists(file):
+                # select it,
+                config_file = file
+                # and stop trying files with lower precedence.
                 break
-    # Proceed if there where no errors
-    if file is not None:
-        # With use $~ (instead of ~) for the user's proper home
-        # directroy. HOME should be defined, but it could be missing.
-        # It could also be set to another directory.
-        if file.startswith('$~'):
-            import pwd
-            # Get the home (also known as initial) directory
-            # of the real user, and the rest of the path
-            file = pwd.getpwuid(os.getuid()).pw_dir + file[2:]
-        # Now that we are done we can change back any NUL to $:s
-        file = file.replace('\0', '$')
-        # If the file we exists,
-        if os.path.exists(file):
-            # select it,
-            config_file = file
-            # and stop trying files with lower precedence.
-            break
 if config_file is None:
     print('No configuration file found', file = sys.stderr)
     sys.exit(1)
@@ -190,7 +215,6 @@ spawn('pdflatex', '-halt-on-error', '--', 'rotd.tex')
 
 # Move or print file?
 print_output = False
-output_file = sys.argv[1]
 if output_file[:1] == '/':
     while output_file[:1] == '/':
         output_file = output_file[1:]
