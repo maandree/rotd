@@ -27,7 +27,7 @@ class Solar:
             if 'HOME' in os.environ and len(os.environ['HOME']) > 0:
                 filenames.append(os.environ['HOME'] + '/.config/geolocation')
             try:
-                filenames.append(wd.getpwuid(os.getuid()).pw_dir + '/.config/geolocation')
+                filenames.append(pwd.getpwuid(os.getuid()).pw_dir + '/.config/geolocation')
             except:
                 pass
             filenames.append('/etc/geolocation')
