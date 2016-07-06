@@ -19,20 +19,20 @@ def is_summer_time(days_offset = 0, check_time = '12:00:00'):
     now = time.localtime()
     (year, mon, mday) = now.tm_year, now.tm_mon, now.tm_mday + days_offset
     feb = lambda y : 29 if y % 400 == 0 or y % 4 == 0 and not y % 100 == 0 else 28
-    DAYS_OF_MONTHS = [-1, 31, feb(year), 31, 30, 31, 30, 30, 31, 30, 31, 30, 31]
+    DAYS_OF_MONTHS = [-1, 31, feb(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     while mday > DAYS_OF_MONTHS[mon]:
         mday -= DAYS_OF_MONTHS[mon]
         mon += 1
         if mon > 12:
             mon = 1
             year += 1
-            DAYS_OF_MONTHS = [-1, 31, feb(year), 31, 30, 31, 30, 30, 31, 30, 31, 30, 31]
+            DAYS_OF_MONTHS = [-1, 31, feb(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     while mday <= 0:
         mon -= 1
         if mon == 0:
             mon = 12
             year -= 1
-            DAYS_OF_MONTHS = [-1, 31, feb(year), 31, 30, 31, 30, 30, 31, 30, 31, 30, 31]
+            DAYS_OF_MONTHS = [-1, 31, feb(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         mday += DAYS_OF_MONTHS[mon]
     date = '%i-%02i-%02i' % (year, mon, mday)
     check_time = '%s %s' % (date, check_time)

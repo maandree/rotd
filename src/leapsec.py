@@ -43,7 +43,7 @@ def leap_seconds(abort_timer = 2):
                  , 'NOV' : 11
                  , 'DEC' : 12
                  }
-        DAYS_OF_MONTHS = [-1, 31, 28, 31, 30, 31, 30, 30, 31, 30, 31, 30, 31]
+        DAYS_OF_MONTHS = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         def get_local_time(utctime, tz):
             year, mon, mday, hour, minute = utctime
             tzh, tzm = tz // 60 // 60, (tz // 60) % 60
