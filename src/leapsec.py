@@ -44,6 +44,12 @@ def leap_seconds(abort_timer = 2):
                  , 'DEC' : 12
                  }
         DAYS_OF_MONTHS = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        def days(year, mon):
+            rc = DAYS_OF_MONTHS[mon]
+            if mon == 2:
+                if (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0:
+                    rc += 1
+            return rc
         def get_local_time(utctime, tz):
             year, mon, mday, hour, minute = utctime
             tzh, tzm = tz // 60 // 60, (tz // 60) % 60
@@ -54,7 +60,7 @@ def leap_seconds(abort_timer = 2):
                 hour, minute = hour - 1, minute + 60
             if hour >= 24:
                 mday, hour = mday + 1, hour - 24
-                if mday > DAYS_OF_MONTHS[mon]:
+                if mday > days(year, mon):
                     mon, mday = mon + 1, 1
                     if mon == 13:
                         year, mon = year + 1, 1
@@ -64,7 +70,7 @@ def leap_seconds(abort_timer = 2):
                     mon -= 1
                     if mon == 0:
                         year, mon = year - 1, 12
-                    mday = DAYS_OF_MONTHS[mon]
+                    mday = days(year, mon)
             return (year, mon, mday, hour, minute)
         def timezone(date):
             guessed = time.mktime(time.strptime(date, '%Y-%m-%d'))
@@ -87,11 +93,7 @@ def leap_seconds(abort_timer = 2):
                 if mon == 0:
                     mon = 12
                     year -= 1
-                mday = DAYS_OF_MONTHS[mon]
-                if mday == 2:
-                    year = year
-                    if (year % 4 == 0 and not year % 100 == 0) or year % 400 == 0:
-                        mday += 1
+                mday = days(year, mon)
                 if mon in (6, 12):
                     kind = 'primary'
                 elif mon in (3, 9):
