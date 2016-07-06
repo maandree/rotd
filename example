@@ -161,6 +161,13 @@ if sol is not None:
     today, tomorrow = sol.elevations(0), sol.elevations(1)
     for elev, today, tomorrow, length in zip(elevs, today, tomorrow, sol.lengths(today, tomorrow)):
         doc += ln(bf('%s: ' % elev, ' & %s & %s & %s' % (n(today), n(tomorrow), length)))
+    gold = sol.golden_hour(0)
+    n = lambda x : '—' if x is None else x.split(' ')[1]
+    doc += ln(bf('Morning golden hour: ', ' & %s–%s & %s &' % (n(gold[0]), n(gold[1]), gold[2])))
+    doc += ln(bf('Evening golden hour: ', ' & %s–%s & %s &' % (n(gold[3]), n(gold[4]), gold[5])))
+    blue = sol.blue_hour(0)
+    doc += ln(bf('Morning blue hour: ', ' & %s–%s & %s &' % (n(blue[0]), n(blue[1]), blue[2])))
+    doc += ln(bf('Evening blue hour: ', ' & %s–%s & %s &' % (n(blue[3]), n(blue[4]), blue[5])))
     doc += end('tabular')
     doc += '\n\n'
 

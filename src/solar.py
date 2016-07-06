@@ -146,7 +146,7 @@ class Solar:
         e2 = s.solar_elevation(self.lat, self.lon, t5b)
         t5 = t5a if e1 > e2 else t5b
         t = (t1, t2, t3, t4, t5, t6, t7, t8, t9)
-        return tuple(Solar.__jc_to_str(x) if x and start <= x <= end is not None else None for x in t)
+        return tuple(Solar.__jc_to_str(x) if x is not None and start <= x <= end else None for x in t)
     
     
     def lengths(self, today, tomorrow, format = '%ih %i\' %i\'\'', solar_noon_string = ''):
@@ -210,3 +210,58 @@ class Solar:
                  strise(tomorrow[1] - today[7]),
                  strise(tomorrow[0] - today[8])]
         return tuple(day + noon + night)
+    
+    
+    def hours(self, elevations, days_offset = 0, format = '%ih %i\' %i\'\''):
+        import solar_python as s, time
+        tz = -(time.timezone, time.altzone)[time.localtime().tm_isdst]
+        a_day = 60 * 60 * 24
+        t = time.time()
+        t += tz
+        t -= t % a_day
+        t -= tz
+        t += days_offset * a_day
+        start = s.epoch_to_julian_centuries(t)
+        end = s.epoch_to_julian_centuries(t + a_day)
+        t1 = s.future_elevation(self.lat, self.lon, elevations[0], start)
+        t2 = s.future_elevation(self.lat, self.lon, elevations[1], start)
+        t3 = s.past_elevation(self.lat, self.lon, elevations[1], end)
+        t4 = s.past_elevation(self.lat, self.lon, elevations[0], end)
+        (t1, t2, t3, t4) = tuple(x if x is not None and start <= x <= end else None for x in (t1, t2, t3, t4))
+        if t2 is None:
+            t2 = t4
+        if t3 is None:
+            t3 = t1
+        def dur(a, z):
+            if a is None and z is None:
+                e = s.solar_elevation(self.lat, self.lon, (start + end) / 2)
+                if elevations[0] <= e <= elevations[1]:
+                    return s.julian_centuries_to_epoch(end) - s.julian_centuries_to_epoch(start)
+                return 0
+            elif a is None and z is not None:
+                return s.julian_centuries_to_epoch(z) - s.julian_centuries_to_epoch(start)
+            elif a is not None and z is None:
+                return s.julian_centuries_to_epoch(end) - s.julian_centuries_to_epoch(a)
+            else:
+                return s.julian_centuries_to_epoch(z) - s.julian_centuries_to_epoch(a)
+        d12 = dur(t1, t2)
+        d34 = dur(t3, t4)
+        (t1, t2, t3, t4) = tuple(Solar.__jc_to_str(x) if x is not None else None for x in (t1, t2, t3, t4))
+        def strise(s):
+            if format is None:
+                return s
+            m, s = s // 60, s % 60
+            h, m = m // 60, m % 60
+            return format % (h, m, s)
+        return (t1, t2, strise(d12), t3, t4, strise(d34))
+
+
+    def golden_hour(self, days_offset = 0, format = '%ih %i\' %i\'\''):
+        from solar_python import SOLAR_ELEVATION_RANGE_GOLDEN_HOUR as elevs
+        return self.hours(elevs, days_offset = days_offset, format = format)
+
+
+    def blue_hour(self, days_offset = 0, format = '%ih %i\' %i\'\''):
+        from solar_python import SOLAR_ELEVATION_RANGE_BLUE_HOUR as elevs
+        return self.hours(elevs, days_offset = days_offset, format = format)
+
