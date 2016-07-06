@@ -213,6 +213,27 @@ class Solar:
     
     
     def hours(self, elevations, days_offset = 0, format = '%ih %i\' %i\'\''):
+        '''
+        Calculates the time and duration when the Sun's elevation is in
+        a specific range. We will call this the X hour. Both the morning
+        X hour and evening X hour is calculated. These may in fact be the
+        same.
+        
+        @param  days_offset:int  The number of days into the future, 0 for today
+        @param  :(float, float)  The Sun's lowest (first element) and highest
+                                 (second element) elevation during the X hour
+        @param  format:str?      The format for the returned strings, must take
+                                 three integers, in order: hours, minutes, and
+                                 seconds, or `None` if the total seconds shall be
+                                 returned as integers
+        @param  :(str?, str?, str|int, str?, str?, str|int)
+                                 0: The beginning of the morning X hour
+                                 1: The end of the morning X hour
+                                 2: The duration of the morning X hour
+                                 3: The beginning of the evening X hour
+                                 4: The end of the evening X hour
+                                 5: The duration of the evening X hour
+        '''
         import solar_python as s, time
         tz = -(time.timezone, time.altzone)[time.localtime().tm_isdst]
         a_day = 60 * 60 * 24
@@ -249,7 +270,7 @@ class Solar:
         (t1, t2, t3, t4) = tuple(Solar.__jc_to_str(x) if x is not None else None for x in (t1, t2, t3, t4))
         def strise(s):
             if format is None:
-                return s
+                return int(s)
             m, s = s // 60, s % 60
             h, m = m // 60, m % 60
             return format % (h, m, s)
@@ -257,11 +278,43 @@ class Solar:
 
 
     def golden_hour(self, days_offset = 0, format = '%ih %i\' %i\'\''):
+        '''
+        Calculates the morning and evening (can be the same) golden hour
+        
+        @param  days_offset:int  The number of days into the future, 0 for today
+        @param  format:str?      The format for the returned strings, must take
+                                 three integers, in order: hours, minutes, and
+                                 seconds, or `None` if the total seconds shall be
+                                 returned as integers
+        @param  :(str?, str?, str|int, str?, str?, str|int)
+                                 0: The beginning of the morning golden hour
+                                 1: The end of the morning golden hour
+                                 2: The duration of the morning golden hour
+                                 3: The beginning of the evening golden hour
+                                 4: The end of the evening golden hour
+                                 5: The duration of the evening golden hour
+        '''
         from solar_python import SOLAR_ELEVATION_RANGE_GOLDEN_HOUR as elevs
         return self.hours(elevs, days_offset = days_offset, format = format)
 
 
     def blue_hour(self, days_offset = 0, format = '%ih %i\' %i\'\''):
+        '''
+        Calculates the morning and evening (can be the same) blue hour
+        
+        @param  days_offset:int  The number of days into the future, 0 for today
+        @param  format:str?      The format for the returned strings, must take
+                                 three integers, in order: hours, minutes, and
+                                 seconds, or `None` if the total seconds shall be
+                                 returned as integers
+        @param  :(str?, str?, str|int, str?, str?, str|int)
+                                 0: The beginning of the morning blue hour
+                                 1: The end of the morning blue hour
+                                 2: The duration of the morning blue hour
+                                 3: The beginning of the evening blue hour
+                                 4: The end of the evening blue hour
+                                 5: The duration of the evening blue hour
+        '''
         from solar_python import SOLAR_ELEVATION_RANGE_BLUE_HOUR as elevs
         return self.hours(elevs, days_offset = days_offset, format = format)
 
