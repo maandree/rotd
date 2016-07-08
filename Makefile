@@ -19,7 +19,8 @@ PLUGINS = \
 	latex.py	\
 	leapsec.py	\
 	solar.py	\
-	summertime.py
+	summertime.py	\
+	wotd.py
 
 
 all: cmd
