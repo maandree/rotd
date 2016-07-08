@@ -1,0 +1,62 @@
+.TH ROTD 1 ROTD
+.SH "NAME"
+rotd - Report of the day
+.SH "SYNPOSIS"
+.B rotd
+.RB [ -c
+.IR config-script ]
+.I output-file
+.SH "DESCRIPTION"
+.B rotd
+generates a daily PDF with information of your choosing
+layed out using LaTeX. It may contain, for example, birthday
+reminders, upcoming events, today's schedule, and whether
+reports.
+.P
+The idea, is to have cron run its every morning, before you
+wake up, and either print out the PDF, e-mail it do you, or
+store it on your home or desktop directory, or anything else
+you can imagine.
+.SH "OPTIONS"
+.TP
+\fB\-c\fP \fIFILE\fP
+The filename of the configuration script. This is a
+script written in Python 3.
+.SH "FILES"
+.TP
+.B $XDG_CONFIG_HOME/rotd/rotdrc
+Default configuration script, this file is used if
+.B -c
+is not used.
+.TP
+.B $HOME/.config/rotd/rotdrc
+First fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+.TP
+.B $HOME/.rotdrc
+Second fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+.TP
+.B ~/.config/rotd/rotdrc
+Third fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+.TP
+.B ~/.rotdrc
+Fourth fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+.TP
+.B /etc/rotdrc
+Fifth fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+.TP
+.B ~/.config/geolocation
+Used by the
+.B solar
+module to get your location if it is not specified. This file
+contains your geographical location using the Global Positioning
+System in decimal format. This will never change. Other programs
+are encouraged to use this file too.
+
+If the file contains more than one line, only the first line,
+even if it is empty, is used.
+.TP
+.B /etc/geolocation
+Fallback file use if ~/.config/geolocation is missing. Other
+programs are encouraged to use this file too.
+.SH "SEE ALSO"
+LaTeX
