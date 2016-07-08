@@ -5,7 +5,7 @@ RUNTIME DEPENDENCIES:
 	curl (optional: for leap second announcements)
 	fortune (optional: for fortune cookies)
 	gnupg (optional: for gnupg key expiry warnings)
-	solar-python (optional: for solar information)
+	solar-python>=2.5 (optional: for solar information)
 
 
 BUILD DEPENDENCIES:
