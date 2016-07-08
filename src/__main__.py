@@ -6,6 +6,7 @@ import os, sys, time
 global spawn, write, LIBEXEC
 
 LIBEXEC = os.getcwd() + ('/..' if os.getcwd().endswith('/src') else '') + '/libexec'
+#%%%sys.path.insert(0, '%%PLUGINPATH%%')
 
 argv0 = 'rotd' if len(sys.argv) == 0 else sys.argv[0]
 

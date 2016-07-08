@@ -7,3 +7,16 @@ RUNTIME DEPENDENCIES:
 	gnupg (optional: for gnupg key expiry warnings)
 	solar-python (optional: for solar information)
 
+
+BUILD DEPENDENCIES:
+
+	make
+	coreutils
+	sed
+
+
+INSTALL DEPENDENCIES:
+
+	make
+	coreutils
+

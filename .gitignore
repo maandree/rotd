@@ -1,13 +1,11 @@
 \#*\#
 *~
 __pycache__/
+bin/
 *.swp
 *.swo
 *.bak
 *.pyc
 *.pyo
 *.orig
-bin/
-aux/
-obj/
 *.pdf
