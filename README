@@ -1,14 +1,44 @@
 NAME
 	rotd - Report of the day
 
-DESCRIPTION
-	rotd generates a daily PDF with information of
-	your choosing. It may contain, for example,
-	birthday reminders, upcoming events, today's
-	schedule, and whether reports.
+SYNOPSIS
+	rotd [-c config-script] output-file
 
-	The idea, is to have cron run its every morning,
-	before you wake up, and either print out the
-	PDF, e-mail it do you, or store it on your
-	home or desktop directory, or anything else you
-	can imagine.
+DESCRIPTION
+	rotd generates a daily PDF with information of your choosing
+	layed out using LaTeX. It may contain, for example, birthday
+	reminders, upcoming events, today's schedule, and whether
+	reports.
+
+	The idea, is to have cron run its every morning, before you
+	wake up, and either print out the PDF, e-mail it do you, or
+	store it on your home or desktop directory, or anything else
+	you can imagine.
+
+OPTIONS
+	-c FILE
+		The filename of the configuration script. This is a
+		script written in Python 3.
+
+FILES
+	$XDG_CONFIG_HOME/rotd/rotdrc
+		Default configuration script, this file is used if
+		-c is not used.
+
+	$HOME/.config/rotd/rotdrc
+		First fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+
+	$HOME/.rotdrc
+		Second fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+
+	~/.config/rotd/rotdrc
+		Third fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+
+	~/.rotdrc
+		Fourth fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+
+	/etc/rotdrc
+		Fifth fallback for $XDG_CONFIG_HOME/rotd/rotdrc.
+
+SEE ALSO
+	LaTeX
