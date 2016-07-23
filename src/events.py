@@ -205,6 +205,7 @@ def swedish_events(only_common = False):
             rc.append(('Mandeladagen',                                  '%i-07-18' % y))
             rc.append(('Sjusovardagen',                                 '%i-07-27' % y))
             rc.append(('Victoriadagen',                                 '%i-07-14' % y))
+            rc.append(('Alternative Pi-dagen',                          '%i-07-22' % y))
             rc.append(('Europeisk minnesdag för stalinismens och nazismens offer', '%i-08-23' % y))
             rc.append(('Jungfru Marie himmelsfärd',                     '%i-08-15' % y))
             rc.append(('Raoul Wallenbergs dag',                         '%i-08-27' % y))
