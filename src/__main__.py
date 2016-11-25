@@ -203,7 +203,7 @@ with open(config_file, 'rb') as script:
 # Decode configurion script file and add a line break
 # at the end to ensure that the last line is empty.
 # If it is not, we will get errors.
-code = code.decode('utf-8', 'error') + '\n'
+code = code.decode('utf-8', 'strict') + '\n'
 # Compile the configuration script,
 code = compile(code, config_file, 'exec')
 # Run script
