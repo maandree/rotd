@@ -19,7 +19,7 @@ def leap_seconds(abort_timer = 2):
     import time
     try:
         #url = 'http://maia.usno.navy.mil/ser7/leapsec.dat'
-        url = 'http://oceandata.sci.gsfc.nasa.gov/Ancillary/LUTs/modis/leapsec.dat'
+        url = 'https://oceandata.sci.gsfc.nasa.gov/Ancillary/LUTs/modis/leapsec.dat'
         annons = spawn('curl', url, abort_timer = abort_timer, get_stdout = True)
         annons = annons.decode('utf-8', 'strict')
         while not annons.startswith(' '):
