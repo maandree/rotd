@@ -53,6 +53,11 @@ class Solar:
         return time.strftime('%Y-%m-%d %H:%M:%S', t)
     
     
+    @staticmethod
+    def __seconds(s):
+        import time
+        return int(time.strftime('%s', time.strptime(s, '%Y-%m-%d %H:%M:%S')))
+    
     def season(self):
         '''
         Returns whether 'summer' or 'winter'
@@ -132,21 +137,22 @@ class Solar:
         t += days_offset * a_day
         start = s.epoch_to_julian_centuries(t)
         end = s.epoch_to_julian_centuries(t + a_day)
-        t1 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_ASTRONOMICAL_DUSK_DAWN, start)
-        t2 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_NAUTICAL_DUSK_DAWN, start)
-        t3 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_CIVIL_DUSK_DAWN, start)
-        t4 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_SUNSET_SUNRISE, start)
         t5a = s.future_elevation_derivative(self.lat, self.lon, 0, start)
-        t5b = s.future_elevation_derivative(self.lat, self.lon, 0, t5a + 0.000001)
-        t6 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_SUNSET_SUNRISE, end)
-        t7 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_CIVIL_DUSK_DAWN, end)
-        t8 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_NAUTICAL_DUSK_DAWN, end)
-        t9 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_ASTRONOMICAL_DUSK_DAWN, end)
+        t5b = s.future_elevation_derivative(self.lat, self.lon, 0, t5a + 0.0000002)
         e1 = s.solar_elevation(self.lat, self.lon, t5a)
         e2 = s.solar_elevation(self.lat, self.lon, t5b)
         t5 = t5a if e1 > e2 else t5b
+        t1 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_ASTRONOMICAL_DUSK_DAWN, t5)
+        t2 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_NAUTICAL_DUSK_DAWN, t5)
+        t3 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_CIVIL_DUSK_DAWN, t5)
+        t4 = s.past_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_SUNSET_SUNRISE, t5)
+        t6 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_SUNSET_SUNRISE, t5)
+        t7 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_CIVIL_DUSK_DAWN, t5)
+        t8 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_NAUTICAL_DUSK_DAWN, t5)
+        t9 = s.future_elevation(self.lat, self.lon, s.SOLAR_ELEVATION_ASTRONOMICAL_DUSK_DAWN, t5)
         t = (t1, t2, t3, t4, t5, t6, t7, t8, t9)
-        return tuple(Solar.__jc_to_str(x) if x is not None and start <= x <= end else None for x in t)
+        #return tuple(Solar.__jc_to_str(x) if x is not None and start <= x <= end else None for x in t)
+        return tuple(Solar.__jc_to_str(x) for x in t)
     
     
     def lengths(self, today, tomorrow, format = '%ih %i\' %i\'\'', solar_noon_string = ''):
@@ -181,9 +187,8 @@ class Solar:
                                                     8: The duration between nautical dusk and
                                                        nautical dawn
         '''
-        seconds  = lambda h, m, s : int(h) * 60 * 60 + int(m) * 60 + int(s)
-        today    = [None if x is None else seconds(*(x.split(' ')[1].split(':'))) for x in today]
-        tomorrow = [None if x is None else seconds(*(x.split(' ')[1].split(':'))) for x in tomorrow]
+        today    = [None if x is None else Solar.__seconds(x) for x in today]
+        tomorrow = [None if x is None else Solar.__seconds(x) for x in tomorrow]
         one_day  = 24 * 60 * 60
         for L in (today, tomorrow):
             for i in range(5, 9):
@@ -234,6 +239,7 @@ class Solar:
                                  4: The end of the evening X hour
                                  5: The duration of the evening X hour
         '''
+        # TODO support not adjusting the timezone
         import solar_python as s, time
         tz = -(time.timezone, time.altzone)[time.localtime().tm_isdst]
         a_day = 60 * 60 * 24
