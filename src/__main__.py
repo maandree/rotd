@@ -19,9 +19,18 @@ def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False):
     @param   successful_exits:set<int>|...  For which exit values shall rotd _not_ fail,
                                             `...` for never fail even if the command
                                             exited by a signal
-    @param   get_stdout:bool                Should the process's stdout be returned
+    @param   get_stdout:bool|int|str        Should the process's stdout be returned, or
+                                            a file descriptor to which to redirect stdout, or
+                                            a file name to which to redirect stdout
     @return  :str?                          The process's output to stdout, if `get_stdout`
     '''
+    close_this = None
+    if isinstance(get_stdout, str):
+        flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_EXCL
+        get_stdout = os.open(get_stdout, flags = flags, mode = 0o600)
+        close_this = get_stdout
+    stdoutfd = None if isinstance(get_stdout, bool) else get_stdout
+    get_stdout = get_stdout if isinstance(get_stdout, bool) else False
     if get_stdout:
         r, w = os.pipe()
     pid = os.fork()
@@ -30,14 +39,19 @@ def spawn(*cmd, successful_exits = [0], abort_timer = 0, get_stdout = False):
             os.close(0)
         except:
             pass
-        if get_stdout and w != 1:
-            os.dup2(w, 1)
+        if get_stdout:
             os.close(r)
+            stdoutfd = w
+        if stdoutfd is not None and stdoutfd != 1:
+            os.dup2(stdoutfd, 1)
+            os.close(stdoutfd)
         if int(abort_timer) > 0:
             import signal
             signal.alarm(int(abort_timer))
         os.execvp(cmd[0], cmd)
     else:
+        if close_this is not None:
+            os.close(close_this)
         output = None
         if get_stdout:
             os.close(w)

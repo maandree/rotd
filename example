@@ -1,7 +1,7 @@
 # -*- python -*-
 # See LICENSE file for copyright and license details.
 
-import time
+import time, pwd
 from latex import *
 from gnupg import *
 from fortune import *
@@ -10,6 +10,7 @@ from wotd import *
 from leapsec import *
 from solar import *
 from summertime import *
+from xkcd import *
 
 doc  = documentclass('memoir', '11pt', 'oneside', 'a4paper')
 doc += fontencoding('T1')
@@ -17,6 +18,8 @@ doc += usepackage('inputenc', 'utf8')
 doc += usepackage('xcolor')
 doc += usepackage('geometry', margin = '1in')
 doc += usepackage('microtype')
+doc += usepackage('graphicx')
+doc += usepackage('adjustbox', 'export')
 doc += usepackage('ulem', 'normalem')
 
 doc += pagestyle('empty')
@@ -170,6 +173,55 @@ if sol is not None:
     doc += ln(bf('Evening blue hour: ', ' & %s–%s & %s &' % (n(blue[3]), n(blue[4]), blue[5])))
     doc += end('tabular')
     doc += '\n\n'
+
+
+
+## xkcd
+try:
+    (last, img, title, text) = xkcd()
+    state = pwd.getpwuid(os.getuid()).pw_dir + '/.var/lib/rotd'
+    try:
+        os.makedirs(state)
+    except FileExistsError:
+        pass
+    state += '/xkcd'
+    if os.path.exists(state):
+        with open(state, 'rb') as file:
+            have = file.read()
+        have = eval(have.decode('utf-8', 'strict'))
+    else:
+        have = set()
+    if last not in have:
+        index = last
+    else:
+        index = 0, None
+        for i in range(1, last):
+            if i not in have:
+                index = i
+                break
+    if index is not None:
+        (index, img, title, text) = xkcd(index)
+        have.add(index)
+        spawn('curl', img, abort_timer = 2, get_stdout = 'xkcd.png')
+        title = Huge(escape(title))
+        text = escape(text, end = '\n')
+        doc += sectionx(whiteonblack('xkcd'))
+        if standalonetest(title):
+            doc += '\\noindent\n'
+            doc += title + '\n\n'
+        doc += '\\vspace{1em}\n'
+        doc += '\includegraphics[max width=\\linewidth,max height=\\textheight]{%s}\n\n' % 'xkcd.png'
+        doc += '\\vspace{1em}\n'
+        if standalonetest(text):
+            doc += '\\noindent\n'
+            doc += text + '\n\n'
+        have = repr(have).encode('utf-8')
+        with open(state, 'wb') as file:
+            file.write(have)
+            file.flush()
+except:
+    pass
+
 
 
 ## (done)

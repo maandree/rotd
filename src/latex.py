@@ -102,3 +102,15 @@ def subsectionx(text, end = '\n'):
     return '\\subsection*{%s}%s' % (str(text), str(end))
 def subsubsectionx(text, end = '\n'):
     return '\\subsubsection*{%s}%s' % (str(text), str(end))
+
+
+def escape(text, end = ''):
+    r = ''
+    for c in str(text):
+        if c == '\\':
+            r += '\\verb|\\|'
+        elif c in '{}%_':
+            r += '\\' + c
+        else:
+            r += c
+    return r + str(end)
