@@ -20,7 +20,8 @@ PLUGINS = \
 	leapsec.py	\
 	solar.py	\
 	summertime.py	\
-	wotd.py
+	wotd.py         \
+	xkcd.py
 
 
 all: cmd
