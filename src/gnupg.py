@@ -17,8 +17,8 @@ def gnupg_expiry(warn_period = 30):
         proc = Popen(['gpg', '--list-secret-keys'], stdout = PIPE)
         output = proc.communicate()[0].decode('utf-8', 'strict')
         output = output.split('\n')
-        output = [x.split('/')[1].split(' ') for x in output if x.startswith('sec') and 'expires' in x]
-        output = [(x[0], x[4][:-1]) for x in output]
+        output = [(x, output[i + 1]) for i, x in enumerate(output) if x.startswith('sec') and 'expires: ' in x]
+        output = [(y.strip(), x.split('expires: ')[1][:10]) for x, y in output]
         rc = []
         now = time.time() // (60 * 60 * 24)
         for key, expiry in output:
