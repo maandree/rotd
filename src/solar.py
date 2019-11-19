@@ -112,6 +112,36 @@ class Solar:
         return Solar.__jc_to_str(solar_python.future_solstice())
     
     
+    def previous_equinox(self):
+        '''
+        Get the time of the previous equinox
+        
+        Will be off by a few minutes from aa.usno.navy.mil/data/docs/EarthSeasons.php,
+        I don't know why, and I don't know which is more correct. Our times are
+        calculated using interpolation, I don't know how aa.usno.navy.mil does
+        it, but probably with a formula.
+        
+        @return  :str  The time of the previous equinox formatted as '%Y-%m-%d %H:%M:%S'
+        '''
+        import solar_python
+        return Solar.__jc_to_str(solar_python.past_equinox())
+    
+    
+    def previous_solstice(self):
+        '''
+        Get the time of the previous solstice
+        
+        Will be off by a few minutes from aa.usno.navy.mil/data/docs/EarthSeasons.php,
+        I don't know why, and I don't know which is more correct. Our times are
+        calculated using interpolation, I don't know how aa.usno.navy.mil does
+        it, but probably with a formula.
+        
+        @return  :str  The time of the previous solstice formatted as '%Y-%m-%d %H:%M:%S'
+        '''
+        import solar_python
+        return Solar.__jc_to_str(solar_python.past_solstice())
+    
+    
     def elevations(self, days_offset = 0):
         '''
         Return the time of the astronomical, nautical, and civil dusk and dawns,
