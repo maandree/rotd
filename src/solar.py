@@ -1,7 +1,7 @@
 # -*- python -*-
 # See LICENSE file for copyright and license details.
 
-# Requires https://github.com/maandree/solar-python
+# Requires https://codeberg.org/maandree/solar-python
 
 class Solar:
     def __init__(self, lat = None, lon = None):
